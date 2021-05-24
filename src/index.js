@@ -31,7 +31,7 @@ class Chat extends React.Component {
         name: user,
         message: texto,
       };
-      //   this.setState({ messages: [message, ...this.state.messages] });
+      //   ok this.setState({ messages: [message, ...this.state.messages] });
       this.socket.emit("CHAT", message);
       event.target.value = "";
     }
