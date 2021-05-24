@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/map.css"],"names":[],"mappings":"AAAA,mBACE,WAAY,CACZ,WACF,CAEA,gBACE,YACF","file":"main.e60d7a25.chunk.css","sourcesContent":[".leaflet-container {\r\n  width: 100vw;\r\n  height: 60vh;\r\n}\r\n\r\n.data-container {\r\n  display: flex;\r\n}\r\n"]}
