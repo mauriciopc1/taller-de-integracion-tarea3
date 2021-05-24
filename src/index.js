@@ -1,17 +1,71 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom";
+import io from "socket.io-client";
+import moment from "moment";
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+const user = prompt("ingresar usuario");
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+const element = <h1>Hello world</h1>;
+
+class Chat extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      messages: [],
+    };
+  }
+  componentDidMount() {
+    this.socket = io("wss://tarea-3-websocket.2021-1.tallerdeintegracion.cl/", {
+      path: "/flights",
+      transports: ["websocket"],
+    });
+    this.socket.on("CHAT", (message) => {
+      this.setState({ messages: [message, ...this.state.messages] });
+    });
+  }
+
+  handleSubmit = (event) => {
+    const texto = event.target.value;
+    if (event.keyCode === 13 && texto) {
+      const message = {
+        name: user,
+        message: texto,
+      };
+      //   this.setState({ messages: [message, ...this.state.messages] });
+      this.socket.emit("CHAT", message);
+      event.target.value = "";
+    }
+  };
+
+  render() {
+    const messages = this.state.messages.map((message, index) => {
+      return (
+        <li key={index}>
+          <b>
+            {moment(new Date(parseInt(message.date))).format(
+              "DD MM YYYY hh:mm:ss"
+            )}{" "}
+            - {message.name}: {message.message}
+          </b>
+        </li>
+      );
+    });
+    return (
+      <div>
+        <input type="text" placeholder="" onKeyUp={this.handleSubmit} />
+        {messages}
+      </div>
+    );
+  }
+}
+
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    return <div className="algo">{element}</div>;
+  }
+}
+
+ReactDOM.render(<Chat />, document.getElementById("root"));
