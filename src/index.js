@@ -61,6 +61,7 @@ class Chat extends React.Component {
     });
     return (
       <div>
+        <h1>Chat</h1>
         <input type="text" placeholder="" onKeyUp={this.handleSubmit} />
         {messages}
       </div>
@@ -99,12 +100,10 @@ class MapRender extends React.Component {
         newJson[position.code].position = position.position;
       }
       this.setState({ positions: newJson });
-      console.log(this.state.positions);
     });
 
     this.socket.on("FLIGHTS", (flight) => {
       this.setState({ flights: flight });
-      console.log(flight);
     });
   }
 
@@ -133,9 +132,68 @@ class MapRender extends React.Component {
         ];
       }
     }
+    let flightsInfo = [];
+    let passengers = [];
+    let flightsPaths = [];
+    for (const flight in this.state.flights) {
+      for (const passenger in this.state.flights[flight].passengers)
+        passengers = [
+          <div>
+            <p>
+              {this.state.flights[flight].passengers[passenger].name},{" "}
+              {this.state.flights[flight].passengers[passenger].age} años
+            </p>
+          </div>,
+          ...passengers,
+        ];
+      flightsInfo = [
+        <div>
+          <div className="data-container">
+            <p className="label">Codigo: </p>
+            <p className="data">{this.state.flights[flight].code}</p>
+          </div>
+          <div className="data-container">
+            <p className="label">aerolinea: </p>
+            <p className="data">{this.state.flights[flight].airline}</p>
+          </div>
+          <div className="data-container">
+            <p className="label">origen: </p>
+            <p className="data">{this.state.flights[flight].origin}</p>
+          </div>
+          <div className="data-container">
+            <p className="label">destino: </p>
+            <p className="data">{this.state.flights[flight].destination}</p>
+          </div>
+          <div className="data-container">
+            <p className="label">avion: </p>
+            <p className="data">{this.state.flights[flight].plane}</p>
+          </div>
+          <div className="data-container">
+            <p className="label">Asientos: </p>
+            <p className="data">{this.state.flights[flight].seats}</p>
+          </div>
+          <div className="data-container">
+            <p className="label">Pasajeros: </p>
+            {passengers}
+          </div>
+        </div>,
+        ...flightsInfo,
+      ];
+      flightsPaths = [
+        <Polyline
+          pathOptions={{ color: "green" }}
+          positions={[
+            this.state.flights[flight].origin,
+            this.state.flights[flight].destination,
+          ]}
+        />,
+        ...paths,
+      ];
+    }
     return (
       <div>
         <button onClick={this.handleRequest}>Pedir informacion</button>
+        <div className="flights-info">{flightsInfo}</div>
         <MapContainer center={{ lat: "4.6973985", lng: "13.41053" }} zoom={2}>
           <TileLayer
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -143,6 +201,7 @@ class MapRender extends React.Component {
           />
           {flights}
           {paths}
+          {flightsPaths}
         </MapContainer>
       </div>
     );
